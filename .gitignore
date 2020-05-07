@@ -127,3 +127,4 @@ dmypy.json
 # my files
 /instances
 /instances_created
+/.idea
