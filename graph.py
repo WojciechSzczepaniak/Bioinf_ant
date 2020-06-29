@@ -18,7 +18,7 @@ def problem_init(data,l):
                     break
     return(matrix, pheromone, d_len)
 
-def main(matrix1,pheromone,d_len, n, l1, n_ants, n_it, f_path1,af,best_path):
+def main(matrix1,pheromone,d_len, n, l1, n_ants, n_it, f_path1,af,best_path,sterowanie):
     ants = []
     for i in range(n_ants):
         ants.append((10, []))
@@ -36,7 +36,7 @@ def main(matrix1,pheromone,d_len, n, l1, n_ants, n_it, f_path1,af,best_path):
                 next_path = matrix1[y]
 
                 next_to_choose = [0 for i in range(len(next_path))]
-                next_to_choose = prawdopodobienstwo(pheromone[y],next_path,next_to_choose)
+                next_to_choose = prawdopodobienstwo(pheromone[y],next_path,next_to_choose,sterowanie)
                 next_wi = numpy.random.choice(numpy.arange(0, len(next_to_choose)), p=next_to_choose)
                 if(next_wi not in ant):
 
@@ -72,7 +72,7 @@ def main(matrix1,pheromone,d_len, n, l1, n_ants, n_it, f_path1,af,best_path):
                 best_path = ant
                 dg = acc
         pheromone = phero_update(pheromone,best_path,dg)
-        pheromone = parowanie(pheromone,0.95)
+        pheromone = parowanie(pheromone,sterowanie[2])
     return(best_path)
 
 def phero_update(pheromone,best_path,dg):
@@ -90,16 +90,16 @@ def parowanie(pheromone, alfa):
             pheromone[i][j] = pheromone[i][j]*alfa
     return(pheromone)
 
-def prawdopodobienstwo(feromon, atrakcyjnosc,next_to_choose):
+def prawdopodobienstwo(feromon, atrakcyjnosc,next_to_choose,sterowanie):
     sumed = 0
     for i in range(len(next_to_choose)):
-        sumed += feromon[i]*(1/atrakcyjnosc[i])
+        sumed += (feromon[i]**sterowanie[0])*((1/atrakcyjnosc[i])**sterowanie[1])
     for i in range(len(next_to_choose)):
-        next_to_choose[i] = (feromon[i]*(1/atrakcyjnosc[i]))/sumed
+        next_to_choose[i] = (feromon[i]**sterowanie[0])*((1/atrakcyjnosc[i])**sterowanie[1])/sumed
     return(next_to_choose)
 
 if __name__ == "__main__":
-    params = [209, 10, 100, 5, "instances/1.txt", 1]
+    params = [209, 10, 200, 5, "instances/1.txt", 1]
     start_time = time.time()
     n = params[0]
     l1 = params[1]
@@ -108,12 +108,12 @@ if __name__ == "__main__":
     f_path1 = params[4]
     af = params[5]
     best_path = []
-
+    sterowanie = [1,1,0.95]
     f = open(f_path1, "r")
     data = f.readlines()
 
     matrix1, pheromone, d_len = problem_init(data, l1)
-    best = main(matrix1, pheromone, d_len, n, l1, n_ants, n_it, f_path1, af, best_path)
+    best = main(matrix1, pheromone, d_len, n, l1, n_ants, n_it, f_path1, af, best_path,sterowanie)
     print(best)
     print(len(best))
     print("--- %s seconds ---" % (time.time() - start_time))
