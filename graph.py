@@ -36,7 +36,7 @@ def main(matrix1,pheromone,d_len, n, l1, n_ants, n_it, f_path1,af,best_path):
                 next_path = matrix1[y]
 
                 next_to_choose = [0 for i in range(len(next_path))]
-                next_to_choose = prawdo(pheromone[y],next_path,next_to_choose)
+                next_to_choose = prawdopodobienstwo(pheromone[y],next_path,next_to_choose)
                 next_wi = numpy.random.choice(numpy.arange(0, len(next_to_choose)), p=next_to_choose)
                 if(next_wi not in ant):
 
